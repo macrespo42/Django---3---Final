@@ -1,0 +1,11 @@
+{% extends 'account/base.html' %}
+{% block content %}
+<div class="homepage">
+  {% if user.is_authenticated %}
+    <p>Logged as {{ user.username }}</p>
+  {% else %}
+  {{ form.as_p }}
+  <input type="submit" value="login">
+  {% endif %}
+</div>
+{% endblock content %}
