@@ -1,8 +1,5 @@
-function login() {
-  const xhttp = new XMLHttpRequest();
-  xhttp.onload = function () {
-    document.querySelector(".homepage").innerHTML = this.responseText;
-  };
-  xhttp.open("GET", "ajax_info.txt", true);
-  xhttp.send();
-}
+document.querySelector("#login-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  let xhttp = new XMLHttpRequest();
+  xhttp.open("POST", "https://localhost:");
+});

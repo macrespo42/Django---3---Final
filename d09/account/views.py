@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
-from django.contrib.auth import authenticate
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
 
 
@@ -33,4 +32,18 @@ class Account(View):
                     'status': 'unauthorized',
                     'content': 'incorrect username/password'
             }
+        return JsonResponse(response, status=response['code'])
+
+
+class LoggedOut(View):
+    def post(self, request):
+        response = {
+            'code': 200,
+            'status': 'success',
+        }
+        logout(request)
+        if not request.user.is_authenticated:
+            response['content'] = 'loggedOut'
+        else:
+            response['content'] = 'loggedIn'
         return JsonResponse(response, status=response['code'])

@@ -1,10 +1,30 @@
 {% extends 'account/base.html' %}
 {% block content %}
 <div class="homepage">
-  {% if user.is_authenticated %}
-    <p>Logged as {{ user.username }}</p>
-  {% else %}
-  <form id="login-form" >
+    <p id="welcome-message">
+    {% if user.is_authenticated %}
+    Logged as {{ user.username }}
+    {% endif %}
+    </p>
+    <form 
+      id="logout-form"
+      {% if user.is_authenticated %}
+      class="visible"
+      {% else %}
+      class="invisible"
+      {% endif %}
+    >
+      {% csrf_token %}
+      <input type="submit" value="Logout">
+    </form>
+
+    <form id="login-form"
+      {% if user.is_authenticated %}
+      class="invisible"
+      {% else %}
+      class="visible"
+      {% endif %}
+    >
     {% csrf_token %}
     {% for field in form %}
     <label for="id_{{ field.name}}">{{field.name}}</label>
@@ -15,8 +35,6 @@
     <input type="submit" value="login">
     <p id="login-error"></p>
   </form>
-  {% endif %}
-  <p id="welcome-message"></p>
 </div>
 <script>
   document.querySelector("#login-form").addEventListener("submit", async (e) => {
@@ -34,9 +52,44 @@
     if (data.code === 401) {
       document.querySelector("#login-error").innerHTML = data.content;
     } else if (data.code === 200) {
-      document.querySelector("#login-form").innerHTML = ""
+      document.querySelector("#login-form").classList.remove("visible")
+      document.querySelector("#login-form").classList.add("invisible")
+
+      document.querySelector("#logout-form").classList.remove("invisible")
+      document.querySelector("#logout-form").classList.add("visible")
+
       document.querySelector("#welcome-message").innerHTML = data.content;
     }
   })
 </script>
+<script>
+  document.querySelector("#logout-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(document.querySelector("#logout-form"));
+        const params = {
+            method: "POST",
+            body: formData
+        };
+
+    const response = await fetch('/account/logout/', params);
+    const data = await response.json();
+    console.log(data)
+    if (data.content == 'loggedOut') {
+      
+      document.querySelector("#login-form").classList.remove("invisible")
+      document.querySelector("#login-form").classList.add("visible")
+
+      document.querySelector("#logout-form").classList.remove("visible")
+      document.querySelector("#logout-form").classList.add("invisible")
+
+      document.querySelector("#welcome-message").innerHTML = "";
+    }
+    else {
+      console.log('c la merde');
+      console.log(data);
+    }
+  })
+</script>
+
 {% endblock content %}
