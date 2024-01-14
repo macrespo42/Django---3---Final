@@ -1,0 +1,11 @@
+{% extends 'chat/base.html' %}
+{% block content %}
+<h1 class="fs-1 text-center m-4">{{ room.name }}</h1>
+<div class="messages text-center">
+</div>
+<form class="text-center">
+  {% csrf_token %}
+  <input class="mb-4" type="text" name="" id=""> <br />
+  <input class="btn btn-primary" type="submit" value="send">
+</form>
+{% endblock content %}
