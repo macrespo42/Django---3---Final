@@ -1,0 +1,9 @@
+{% extends 'chat/base.html' %}
+{% block content %}
+<h1 class="fs-1 text-center m-4">Available chatrooms</h1>
+<ul class="text-center">
+  {% for room in chatrooms %}
+  <li class="link-light m-5" ><a class="btn btn-primary" href="{% url 'chatroom' name=room.name %}">{{room.name}}</a></li>
+  {% endfor %}
+</ul>
+{% endblock content %}
