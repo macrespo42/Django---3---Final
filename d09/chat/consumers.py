@@ -24,6 +24,11 @@ class ChatConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, _):
+        username = self.scope.get("user", None)
+        if username:
+            username = username.username
+            # Send a special message when a user joins the room
+            self.send_special_message(f"{username} leave the room")
         # Leave room group
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
