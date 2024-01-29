@@ -8,9 +8,11 @@
   {% load django_bootstrap5 %}
   {% bootstrap_css %}
   {% bootstrap_javascript %}
+  {% block style %}
+  {% endblock style %}
 </head>
 
-<body>
+<body class="mx-4">
   {% block content %}
   {% endblock content %}
 </body>

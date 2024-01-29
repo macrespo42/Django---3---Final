@@ -1,8 +1,12 @@
 {% extends "chat/base.html" %}
+{% block style %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'chat/room.css' %}">
+{% endblock style %}
 {% block content %}
-    <div class="mb-3">
-      <h1>Welcome to {{ room_name}}</h1>
-      <textarea class="form-control" id="chat-log" cols="100" rows="20"></textarea><br>
+    <h1 class="text-center">Welcome to {{ room_name}}</h1>
+    <div class="mb-3 chatbox-container">
+      <textarea class="form-control chatbox" id="chat-log" cols="100" rows="20" readonly disabled></textarea><br>
     </div>
     <div class="mb-3">
       <input class="form-control" id="chat-message-input" type="text" size="100"><br>
