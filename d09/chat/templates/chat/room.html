@@ -11,8 +11,10 @@
       <input class="btn btn-primary" id="chat-message-submit" type="button" value="Send">
     </div>
     {{ room_name|json_script:"room-name" }}
+    {{ request.user.username|json_script:"username" }}
     <script>
         const roomName = JSON.parse(document.querySelector('#room-name').textContent);
+        const username = JSON.parse(document.querySelector('#username').textContent);
 
         const chatSocket = new WebSocket(
             'ws://'
@@ -40,7 +42,7 @@
 
         document.querySelector('#chat-message-submit').onclick = function(e) {
             const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
+            const message = username + ": " + messageInputDom.value;
             chatSocket.send(JSON.stringify({
                 'message': message
             }));
