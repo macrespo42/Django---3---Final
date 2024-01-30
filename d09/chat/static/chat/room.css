@@ -1,8 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+
+.chatbox-container {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  gap: 1rem;
+}
+
 .chatbox {
-  border: 1px solid blue;
+  width: 70%;
   height: 300px;
   display: flex;
-  flex-direction: column;
+  flex-flow: column wrap;
   justify-content: flex-end;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 1em;
+}
+
+.message {
+  width: 100%;
+}
+
+.connected-users {
+  width: 30%;
+  height: 300px;
   overflow: scroll;
 }

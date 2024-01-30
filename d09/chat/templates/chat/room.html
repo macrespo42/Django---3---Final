@@ -5,9 +5,12 @@
 {% endblock style %}
 {% block content %}
     <h1 class="text-center">Welcome to {{ room_name}}</h1>
-    <div class="mb-3 chatbox-container">
-      <ul class="chatbox" id="chat-log">
-      </ul>
+    <div class="container-fluid chatbox-container">
+      <div class="mb-3 chatbox border border-primary" id="chat-log"></div>
+      <div class="mb-3 connected-users border border-success">
+        <p>macrespo</p>
+        <p>admin</p>
+      </div>
     </div>
     <div class="mb-3">
       <input class="form-control" id="chat-message-input" type="text" size="100"><br>
@@ -32,7 +35,8 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             let chatbox = document.querySelector('#chat-log');
-            let message = document.createElement("li");
+            let message = document.createElement("div");
+            message.classList.add("message");
             message.textContent = data.message; 
             chatbox.append(message)
         };
