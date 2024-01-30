@@ -3,7 +3,7 @@ import json
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from .models import Chatroom, Message
+from .models import Chatroom, Message, RoomConnectedUser
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -17,6 +17,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         chatroom = Chatroom.objects.get(name=self.room_name)
         return Message.objects.create(author=author, chatroom=chatroom, content=content)
 
+    @database_sync_to_async
+    def add_connected_user(self, user):
+        chatroom = Chatroom.objects.get(name=self.room_name)
+        RoomConnectedUser.objects.create(user=user, chatroom=chatroom)
+
+    @database_sync_to_async
+    def remove_connected_user(self, user):
+        chatroom = Chatroom.objects.get(name=self.room_name)
+        RoomConnectedUser.objects.get(user=user, chatroom=chatroom).delete()
+
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
@@ -27,20 +37,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         # Get the username of the user joining the room
-        username = self.scope.get("user", None)
-        if username:
-            username = username.username
+        user = self.scope.get("user", None)
+        if user:
             # Send a special message when a user joins the room
-            await self.send_special_message(f"{username} joined the room")
+            await self.send_special_message(f"{user.username} joined the room")
+
+            await self.add_connected_user(user)
 
         await self.accept()
 
     async def disconnect(self, _):
-        username = self.scope.get("user", None)
-        if username:
-            username = username.username
+        user = self.scope.get("user", None)
+        if user:
             # Send a special message when a user joins the room
-            await self.send_special_message(f"{username} leave the room")
+            await self.send_special_message(f"{user.username} leave the room")
+
+            await self.remove_connected_user(user)
         # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
