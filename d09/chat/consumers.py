@@ -20,7 +20,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def remove_connected_user(self, user):
         chatroom = Chatroom.objects.get(name=self.room_name)
-        RoomConnectedUser.objects.get(user=user, chatroom=chatroom).delete()
+        RoomConnectedUser.objects.filter(user=user, chatroom=chatroom).delete()
 
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
@@ -47,7 +47,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Send a special message when a user joins the room
             await self.send_special_message(f"{user.username} leave the room")
 
-            await self.remove_connected_user(user)
+        await self.remove_connected_user(user)
+
         # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
