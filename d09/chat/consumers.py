@@ -8,11 +8,6 @@ from .models import Chatroom, Message, RoomConnectedUser
 
 class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
-    def get_last_messages(self):
-        last_messages = Message.objects.filter(chatroom__name=self.room_name).order_by("-created_ad").values("content")[:3]
-        return [message for message in last_messages]
-
-    @database_sync_to_async
     def create_chat(self, content, author):
         chatroom = Chatroom.objects.get(name=self.room_name)
         return Message.objects.create(author=author, chatroom=chatroom, content=content)
@@ -87,12 +82,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Handle special messages (e.g., user joined the room)
 
         message = event["message"]
-
-        messages_historic = await self.get_last_messages()
-        if messages_historic:
-            messages_historic.reverse()
-        for old_message in messages_historic:
-            await self.send(text_data=json.dumps({"message": old_message['content']}))
 
         # Send the special message to WebSocket
         await self.send(text_data=json.dumps({"message": message}))

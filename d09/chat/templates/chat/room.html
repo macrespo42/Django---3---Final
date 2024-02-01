@@ -6,7 +6,11 @@
 {% block content %}
     <h1 class="text-center">Welcome to {{ room_name}}</h1>
     <div class="container-fluid chatbox-container">
-      <div class="mb-3 chatbox border border-primary" id="chat-log"></div>
+      <div class="mb-3 chatbox border border-primary" id="chat-log">
+        {% for message in message_historic %}
+          <div class="message">{{ message.content }}</div>
+        {% endfor %}
+      </div>
       <div class="mb-3 connected-users border border-success">
         <p>macrespo</p>
         <p>admin</p>

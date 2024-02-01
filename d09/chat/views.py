@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from .models import Chatroom
+from .models import Chatroom, Message
 
 
 @login_required(login_url="/account")
@@ -14,4 +14,9 @@ def index(request):
 
 @login_required(login_url="/account")
 def room(request, name):
-    return render(request, "chat/room.html", {"room_name": name})
+    messages = Message.objects.filter(chatroom__name=name).order_by("created_ad").values("content")
+    context = {
+        "room_name": name,
+        "message_historic": messages[len(messages) - 3:]
+    }
+    return render(request, "chat/room.html", context)
