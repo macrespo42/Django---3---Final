@@ -35,7 +35,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = self.scope.get("user", None)
         if user:
             # Send a special message when a user joins the room
-            await self.send_special_message(f"{user.username} joined the room")
+            await self.send_special_message(f"{user.username} joined the room", "connect", user.username)
 
             await self.add_connected_user(user)
 
@@ -45,7 +45,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = self.scope.get("user", None)
         if user:
             # Send a special message when a user joins the room
-            await self.send_special_message(f"{user.username} leave the room")
+            await self.send_special_message(f"{user.username} leave the room", "disconnect", user.username)
 
         await self.remove_connected_user(user)
 
@@ -73,16 +73,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({"message": message}))
 
-    async def send_special_message(self, message):
+    async def send_special_message(self, message, action, username):
         # Send a special message to the room group
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat.special_message", "message": message}
+            self.room_group_name, {"type": "chat.special_message",
+                                   "message": message,
+                                   "action": action,
+                                   "username": username}
         )
 
     async def chat_special_message(self, event):
         # Handle special messages (e.g., user joined the room)
 
         message = event["message"]
+        action = event["action"]
+        username = event["username"]
 
         # Send the special message to WebSocket
-        await self.send(text_data=json.dumps({"message": message}))
+        await self.send(text_data=json.dumps({"message": message, "action": action, "username": username}))

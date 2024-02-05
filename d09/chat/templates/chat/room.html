@@ -12,9 +12,11 @@
         {% endfor %}
       </div>
       <div class="mb-3 connected-users border border-success">
-        {% for user in connected_users %}
-          <p>{{ user.user__username }}</p>
-        {% endfor %}
+        <ul id="connected_users">
+          {% for user in connected_users %}
+          <li id="{{ user.user__username}}">{{ user.user__username }}</li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
     <div class="mb-3">
@@ -39,12 +41,23 @@
 
         chatSocket.onmessage = function(e) {
           const data = JSON.parse(e.data);
-          console.log(data)
           let chatbox = document.querySelector('#chat-log');
           let message = document.createElement("div");
           message.classList.add("message");
           message.textContent = data.message; 
           chatbox.append(message)
+
+          if (data.action == "disconnect") {
+            console.log("disconnected");
+            document.querySelector(`#${data.username}`).remove();
+          } else if (data.action == "connect" && !document.querySelector(`#${data.username}`)) {
+            console.log("connect");
+            let connected_users = document.querySelector("#connected_users");
+            let user = document.createElement("li");
+            user.setAttribute("id", data.username);
+            user.textContent = data.username;
+            connected_users.append(user);
+          }
         };
 
         chatSocket.onclose = function(e) {
