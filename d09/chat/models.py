@@ -18,3 +18,7 @@ class Message(models.Model):
 class RoomConnectedUser(models.Model):
     chatroom = models.ForeignKey(Chatroom, on_delete=models.CASCADE)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    class Meta:
+
+        unique_together = ['chatroom', 'user']
