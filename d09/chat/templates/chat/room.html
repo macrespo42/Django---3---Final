@@ -48,10 +48,8 @@
           chatbox.append(message)
 
           if (data.action == "disconnect") {
-            console.log("disconnected");
             document.querySelector(`#${data.username}`).remove();
           } else if (data.action == "connect" && !document.querySelector(`#${data.username}`)) {
-            console.log("connect");
             let connected_users = document.querySelector("#connected_users");
             let user = document.createElement("li");
             user.setAttribute("id", data.username);
