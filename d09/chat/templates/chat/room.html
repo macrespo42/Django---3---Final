@@ -6,10 +6,12 @@
 {% block content %}
     <h1 class="text-center">Welcome to {{ room_name}}</h1>
     <div class="container-fluid chatbox-container">
-      <div class="mb-3 chatbox border border-primary" id="chat-log">
-        {% for message in message_historic %}
-          <div class="message">{{ message.content }}</div>
-        {% endfor %}
+      <div class="chat-container" id="chatContainer">
+        <ul id="messageList">
+          {% for message in message_historic %}
+          <li class="message">{{ message.content }}</li>
+          {% endfor %}
+        </ul>
       </div>
       <div class="mb-3 connected-users border border-success">
         <ul id="connected_users">
@@ -39,10 +41,17 @@
             + '/'
         );
 
+        const chatbox = document.querySelector('#messageList');
+
+        function scrollToBottom() {
+          const chat = document.querySelector('#chatContainer');
+          chat.scrollTop = chat.scrollHeight;
+        }
+
         chatSocket.onmessage = function(e) {
           const data = JSON.parse(e.data);
-          let chatbox = document.querySelector('#chat-log');
-          let message = document.createElement("div");
+
+          const message = document.createElement("li");
           message.classList.add("message");
           message.textContent = data.message; 
           chatbox.append(message)
@@ -56,6 +65,7 @@
             user.textContent = data.username;
             connected_users.append(user);
           }
+
         };
 
         chatSocket.onclose = function(e) {
@@ -76,6 +86,7 @@
                 'message': message
             }));
             messageInputDom.value = '';
+            scrollToBottom();
         };
     </script>
 {% endblock %}
