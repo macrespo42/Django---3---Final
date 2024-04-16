@@ -14,9 +14,10 @@ def index(request):
 def room(request, name):
     messages = (
         Message.objects.filter(chatroom__name=name)
-        .order_by("created_ad")
-        .values("content")[2::]
+        .order_by("-created_ad")
+        .values("content")[0:3][::-1]
     )
+
     connected_users = RoomConnectedUser.objects.filter(chatroom__name=name).values(
         "user__username"
     )
